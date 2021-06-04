@@ -1,0 +1,19 @@
+{
+  "name": "collected",
+  "version": "1.0.0",
+  "description": "COLLECTed",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JosephStalnaker/COLLECTed.git"
+  },
+  "author": "Joseph Stalnaker",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JosephStalnaker/COLLECTed/issues"
+  },
+  "homepage": "https://github.com/JosephStalnaker/COLLECTed#readme"
+}
