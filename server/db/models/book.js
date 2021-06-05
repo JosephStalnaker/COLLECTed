@@ -1,34 +1,35 @@
 const Sequelize = require('sequelize');
 const db = require('../db');
 
-const User = db.define('User', {
-  username: {
-    type: Sequelize.STRING,
-    unique: true,
-    allowNull: false,
-    validate: {
-      notEmpty: true,
-    },
-  },
-  firstName: {
+const Book = db.define('Book', {
+  title: {
     type: Sequelize.STRING,
     allowNull: false,
     validate: {
       notEmpty: true,
     },
   },
-  lastName: {
+  author: {
     type: Sequelize.STRING,
     allowNull: false,
     validate: {
       notEmpty: true,
     },
   },
-  // password: {
-  //   type: Sequelize.STRING,
-  // },
-  location: {
+  publisher: {
     type: Sequelize.STRING,
+    allowNull: false,
+    validate: {
+      notEmpty: true,
+    },
+  },
+  edition: {
+    type: Sequelize.ENUM({
+      values: ['1st', '2nd', 'unknown'],
+    }),
+  },
+  description: {
+    type: Sequelize.TEXT,
     allowNull: false,
     validate: {
       notEmpty: true,
@@ -41,4 +42,4 @@ const User = db.define('User', {
   },
 });
 
-module.exports = User;
+module.exports = Book;

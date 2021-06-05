@@ -1,7 +1,7 @@
 import React from 'react';
 
-const App = () => {
+const Home = () => {
   return <div>COLLECTed</div>;
 };
 
-export default App;
+export default Home;
