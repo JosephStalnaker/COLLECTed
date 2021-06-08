@@ -7,13 +7,13 @@ const Routes = () => {
     <Router>
       <div>
         <header>
-          <h1>COLLECTed</h1>
+          <h1 id="header-logo">COLLECTed</h1>
+          <nav>
+            <div id="nav-container">
+              <Link to="/">Home</Link>
+            </div>
+          </nav>
         </header>
-        <nav>
-          <div id="nav-container">
-            <Link to="/">Home</Link>
-          </div>
-        </nav>
         <main>
           <div>
             <Switch>
