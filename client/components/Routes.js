@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
+import Allbooks from './Allbooks';
 import Home from './Home';
 
 const Routes = () => {
@@ -10,6 +11,7 @@ const Routes = () => {
           <h1>COLLECTed</h1>
           <div id="nav-container">
             <Link to="/">Home</Link>
+            <Link to="/books">Books</Link>
           </div>
         </header>
         <nav></nav>
@@ -17,6 +19,7 @@ const Routes = () => {
           <div>
             <Switch>
               <Route exact path="/" component={Home} />
+              <Route exact path="/books" component={Allbooks} />
             </Switch>
           </div>
         </main>

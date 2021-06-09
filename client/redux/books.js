@@ -10,10 +10,10 @@ export const setBooks = (books) => ({
 });
 
 //thunk
-
 export const fetchBooks = () => async (dispatch) => {
   try {
     const { data } = await axios.get('/api/books');
+    console.log('here is data in thunk', data);
     dispatch(setBooks(data));
   } catch (error) {
     console.log('error fetching books', error.message);

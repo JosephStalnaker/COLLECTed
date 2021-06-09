@@ -1,16 +1,20 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-//import fetchBooks from '../redux/books
+import { fetchBooks } from '../redux/books';
 //import AddBook from './AddBook
+import 'regenerator-runtime/runtime';
 
 class AllBooks extends React.Component {
   componentDidMount() {
+    console.log('here is state', this.state);
+    console.log('here are props', this.props);
     this.props.loadBooks();
   }
 
   render() {
     const { books } = this.props;
+    console.log('here are books', books);
     return (
       <div>
         <main>
