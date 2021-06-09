@@ -1,7 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
-import Allbooks from './Allbooks';
 import Home from './Home';
+import Allbooks from './Allbooks';
+import AllApparels from './AllApparels';
 
 const Routes = () => {
   return (
@@ -12,6 +13,7 @@ const Routes = () => {
           <div id="nav-container">
             <Link to="/">Home</Link>
             <Link to="/books">Books</Link>
+            <Link to="/apparels">Apparel</Link>
           </div>
         </header>
         <nav></nav>
@@ -20,6 +22,7 @@ const Routes = () => {
             <Switch>
               <Route exact path="/" component={Home} />
               <Route exact path="/books" component={Allbooks} />
+              <Route exact path="/apparels" component={AllApparels} />
             </Switch>
           </div>
         </main>

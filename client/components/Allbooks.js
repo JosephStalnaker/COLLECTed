@@ -18,9 +18,9 @@ class AllBooks extends React.Component {
     return (
       <div>
         <main>
-          <div id="container">
+          <div id="all-books-container">
             {books.map((book) => (
-              <div id="all-books-container" key={book.id}>
+              <div id="all-books-book-container" key={book.id}>
                 <img src={book.imageUrl} width="100" height="75" />
                 <div id="all-books-details">
                   <Link to={`/books/${book.id}`}>

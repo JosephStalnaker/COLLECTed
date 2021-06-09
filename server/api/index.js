@@ -2,7 +2,7 @@ const router = require('express').Router();
 
 router.use('/users', require('./users'));
 router.use('/books', require('./books'));
-// router.use('/apparel', require('./apparel'));
+router.use('/apparels', require('./apparels'));
 //accessories
 //shoes
 //belts

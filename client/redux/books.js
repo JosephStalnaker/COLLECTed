@@ -13,7 +13,7 @@ export const setBooks = (books) => ({
 export const fetchBooks = () => async (dispatch) => {
   try {
     const { data } = await axios.get('/api/books');
-    console.log('here is data in thunk', data);
+    console.log('here is data in thunk fetchBooks', data);
     dispatch(setBooks(data));
   } catch (error) {
     console.log('error fetching books', error.message);
