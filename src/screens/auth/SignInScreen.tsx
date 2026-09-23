@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
+  Image,
 } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { signIn } from "../../services/auth";
@@ -46,8 +47,14 @@ const SignInScreen = ({ navigation }: Props) => {
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <Text style={styles.title}>COLLECTed</Text>
-      <Text style={styles.subtitle}>Sign in to your collection</Text>
+      <View style={styles.imageContainer}>
+        <Image
+          source={require("../../../assets/collectedLogoFull.png")}
+          style={styles.logo}
+          resizeMode="contain"
+        />
+      </View>
+      <Text style={styles.subtitle}>Sign in to the Collected Community</Text>
 
       <TextInput
         style={styles.input}
@@ -80,7 +87,7 @@ const SignInScreen = ({ navigation }: Props) => {
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
-        <Text style={styles.link}>Don't have an account? Sign up</Text>
+        <Text style={styles.link}>Don&apos;t have an account? Sign up</Text>
       </TouchableOpacity>
     </KeyboardAvoidingView>
   );
@@ -91,7 +98,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     paddingHorizontal: 24,
-    backgroundColor: "#fff",
+    backgroundColor: "#ffffff",
+  },
+  imageContainer: {
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  logo: {
+    width: 200,
+    height: 100,
   },
   title: {
     fontSize: 36,
@@ -114,11 +129,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   button: {
-    backgroundColor: "#000",
-    borderRadius: 8,
+    backgroundColor: "#f90606",
+    borderRadius: 50,
     padding: 16,
     alignItems: "center",
-    marginTop: 8,
+    marginTop: 4,
   },
   buttonText: {
     color: "#fff",
