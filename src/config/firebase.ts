@@ -7,7 +7,6 @@ const firebaseConfig = {
   apiKey: "AIzaSyAoVSv2CNro9qtX79FvxiZeCCZHH9MSiBg",
   authDomain: "collected-c5db0.firebaseapp.com",
   projectId: "collected-c5db0",
-  projectId: "collected-c5db0",
   storageBucket: "collected-c5db0.firebasestorage.app",
   messagingSenderId: "800951593946",
   appId: "1:800951593946:web:ee0e42afe3c35a8a16eee3",
