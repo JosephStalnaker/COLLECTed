@@ -196,7 +196,7 @@ Unique on `(item_id, position)`. Index on `item_id`.
 | `reported_user_id` | uuid | FK → `profiles(id)` set null (the report survives the reported user's deletion) |
 | `target_type` | text | `profile`, `collection_item`, `item_photo` (later `message`) |
 | `target_id` | uuid | |
-| `reason` | text not null | fixed list in the app: spam, harassment, inappropriate content, other |
+| `reason` | text not null | fixed list in the app: spam, harassment, inappropriate content, scam or fraud, other |
 | `details` | text | |
 | `status` | text not null default 'open' | For your moderation workflow |
 
@@ -366,6 +366,7 @@ Post-MVP: chat. It will use `conversations`, `conversation_members` and `message
 ## Open questions
 
 - **Payment provider** for paid plans (App Store and Play in-app purchases, likely through RevenueCat). This doesn't affect the schema; `subscriptions` is written server-side either way.
+- **Terms of service (before launch):** must state that any sale or trade between collectors is arranged between them and is not handled or guaranteed by COLLECTed. Have someone who does legal work write this wording. The terms should be linked from sign-up and settings.
 - **Moderation response time:** Apple expects timely action on reports. Decide how you'll be notified of new reports, for example with a database webhook to email.
 - **Username rules:** can usernames be changed after sign-up?
 
