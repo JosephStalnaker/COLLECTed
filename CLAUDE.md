@@ -23,6 +23,19 @@ npx jest -t "greets the signed-in user"   # one test by name
 npx expo install <pkg>     # add deps at versions compatible with SDK 56
 ```
 
+Supabase CLI (a dev dependency, so always run it through `npx`):
+
+```bash
+npx supabase login                               # once per machine
+npx supabase link --project-ref <dev-ref>        # point the CLI at the dev project
+npx supabase migration new <name>                # new file in supabase/migrations/
+npx supabase db push                             # apply pending migrations to the linked project
+npx supabase gen types typescript --linked > src/data/database.types.ts
+npx supabase test db                             # pgTAP tests in supabase/tests/
+```
+
+Docker isn't installed, so `supabase start` and a local stack aren't used; migrations are tested against the dev project, then pushed to prod. `supabase/config.toml` only configures the local stack; hosted auth settings (email confirmation, redirect URLs) are set per project in the dashboard. To run the app against Supabase, copy `.env.example` to `.env.local` and fill in the dev project's URL and publishable key.
+
 Tests live in `__tests__/` at the repo root and are named `*-test.tsx` (the Expo convention). Component tests use React Native Testing Library v14, which runs on `test-renderer` instead of the deprecated `react-test-renderer`. In v14, `render` is async, so use `await render(...)`, and matchers like `toBeOnTheScreen` are built in. To keep Firebase out of tests, mock `src/services/*` with `jest.mock`. End-to-end tests are not set up yet; Maestro is planned.
 
 `tsconfig.json` sets `"types": ["jest"]` because TypeScript 6 no longer auto-includes `@types/*`. If you add another global types package, add it to that list too.
@@ -34,6 +47,7 @@ Tests live in `__tests__/` at the repo root and are named `*-test.tsx` (the Expo
 - **Entry**: `index.ts` → `App.tsx` → `src/navigation/RootNavigator.tsx`. There is no Expo Router; navigation is plain React Navigation v7 (native-stack plus bottom-tabs).
 - **Auth gating**: `RootNavigator` subscribes to Firebase `onAuthStateChanged` through `services/auth.ts` and writes the result to the Zustand store (`store/authStore.ts`). The stack renders either the auth screens (SignIn/SignUp) or the `Main` tab navigator depending on `isAuthenticated`. It renders `null` while `isLoading`. Screens navigate between the auth and main flows only by changing auth state, never by calling `navigate`.
 - **User model**: Firebase Auth creates the account, and the app profile is a Firestore document at `users/{uid}`, which `signUp` writes. `subscribeToAuthChanges` and `signIn` return that Firestore doc rather than the Firebase `User`. A signed-in user with no `users/{uid}` doc is therefore treated as signed out.
+- **Data layer (Supabase)**: `src/data/` holds the Supabase client (`client.ts`), config and, as the migration proceeds, one module per domain. It must not import `react-native` or Expo modules so a future web app can reuse it; native-only wiring (the `expo-sqlite/localStorage/install` session-storage polyfill, `AppState` token refresh) belongs outside it. Screens and stores call `src/data/*`, never `supabase` directly. In Jest, stub `globalThis.WebSocket` before importing the client (Node 20 has none).
 - **Layers**: `src/config/firebase.ts` exports the `auth`, `db` and `storage` singletons. `src/services/` holds the Firebase calls. `src/store/` holds the Zustand stores. `src/screens/{auth,main}/` holds the UI. `src/types/` holds the shared domain types (`User`, `Collection`, `Item`, where `Item.fields` is a free-form per-category attribute map).
 - **Styling**: each screen defines its own `StyleSheet.create`. There is no shared theme or design system yet. `app.json` sets `userInterfaceStyle: "light"`.
 
