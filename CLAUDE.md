@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-COLLECTed: a React Native / Expo (SDK 56) social app for collectibles such as books and music. It is at the early scaffold stage: auth, navigation and a placeholder Home screen exist; collections, items and the social features do not yet. The backend currently runs on Firebase and is being migrated to Supabase (see Current migration).
+COLLECTed: a React Native / Expo (SDK 56) community app for sharing collections, starting with books and music. It is at the early scaffold stage: auth, navigation and a placeholder Home screen exist; collections, items and the social features do not yet. The backend currently runs on Firebase and is being migrated to Supabase (see Current migration).
 
 ## Commands
 
@@ -39,16 +39,24 @@ Tests live in `__tests__/` at the repo root and are named `*-test.tsx` (the Expo
 
 ## MVP scope
 
-- Email sign up and sign in
-- Add and delete books in your collection
+COLLECTed is a community for sharing collections. The app isn't built as a marketplace (no listings, prices, checkout or payments), but collectors are free to buy, sell or trade with each other on their own terms through their own communication. The MVP launches with two categories, books and music (records, CDs, cassettes), but the data model is category-generic because clothing, art, furniture and more will follow.
+
+- Email sign up and sign in (signed-in only; no guest browsing)
+- Add and delete books and music items in your collection, including multiple copies of the same item
+- Photos on each item: 2 per item on the free plan (front and back), 10 on paid, enforced in the database
+- Every collection is visible to every signed-in user
 - Favorite other users
 - Friend other users (send, accept, decline)
 - Search across all users' collections
-- Contact another user by email (in-app chat is post-MVP)
+- Contact any signed-in user by email, only if they have opted in (`share_email`, off by default)
+- Block and report users
+- In-app account deletion
+
+Chat is post-MVP. A web app is planned later.
 
 ## Current migration
 
-We are moving the backend from Firebase to Supabase, mainly for Postgres full-text search. Do not add new Firebase code or dependencies. Supabase URL and anon key go in `EXPO_PUBLIC_*` env vars. The service role key must never appear in app code.
+We are moving the backend from Firebase to Supabase, mainly for Postgres full-text search. **The approved plan is [docs/supabase-migration-plan.md](docs/supabase-migration-plan.md)**. Follow its schema, RLS rules, step order and data-layer design. Do not add new Firebase code or dependencies. The Supabase URL and publishable key (the replacement for the anon key) go in `EXPO_PUBLIC_*` env vars. The secret key (formerly the service-role key) must never appear in app code; only server-side Edge Functions use it.
 
 ## Definition of done
 
