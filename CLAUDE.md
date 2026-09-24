@@ -39,7 +39,7 @@ Tests live in `__tests__/` at the repo root and are named `*-test.tsx` (the Expo
 
 ## MVP scope
 
-COLLECTed is a community for sharing collections, not a marketplace: no listings, prices, trades or sales. The MVP launches with two categories, books and music (records, CDs, cassettes), but the data model is category-generic because clothing, art, furniture and more will follow.
+COLLECTed is a community for sharing collections. The app isn't built as a marketplace (no listings, prices, checkout or payments), but collectors are free to buy, sell or trade with each other on their own terms through their own communication. The MVP launches with two categories, books and music (records, CDs, cassettes), but the data model is category-generic because clothing, art, furniture and more will follow.
 
 - Email sign up and sign in (signed-in only; no guest browsing)
 - Add and delete books and music items in your collection, including multiple copies of the same item

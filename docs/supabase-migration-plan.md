@@ -5,7 +5,7 @@ Status: approved 2026-09-23; launch categories changed to books and music on 202
 ## Goals and constraints
 
 - Move the backend from Firebase to Supabase, mainly for Postgres full-text search.
-- COLLECTed is a community for sharing collections, not a marketplace. There are no listings, prices, trades or sales.
+- COLLECTed is a community for sharing collections. The app isn't built as a marketplace (no listings, prices, checkout or payments), but collectors are free to buy, sell or trade with each other on their own terms through their own communication.
 - The MVP launches with **two categories: books and music** (records, CDs, cassettes). Both are mass-produced, so both use the shared catalog. The schema is category-generic: clothing, art, furniture and more will follow, and adding a category is a data change, not a new table.
 - Early growth targets book and music collectors first, so each community is big enough for collectors to find each other.
 - **Signed-in only.** There is no guest browsing. All read access uses the `authenticated` role, never `anon`.
