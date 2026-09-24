@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-COLLECTed: a React Native / Expo (SDK 56) community app for sharing collections, starting with books. It is at the early scaffold stage: auth, navigation and a placeholder Home screen exist; collections, items and the social features do not yet. The backend currently runs on Firebase and is being migrated to Supabase (see Current migration).
+COLLECTed: a React Native / Expo (SDK 56) community app for sharing collections, starting with books and music. It is at the early scaffold stage: auth, navigation and a placeholder Home screen exist; collections, items and the social features do not yet. The backend currently runs on Firebase and is being migrated to Supabase (see Current migration).
 
 ## Commands
 
@@ -53,11 +53,11 @@ Tests live in `__tests__/` at the repo root and are named `*-test.tsx` (the Expo
 
 ## MVP scope
 
-COLLECTed is a community for sharing collections, not a marketplace: no listings, prices, trades or sales. The MVP ships books only, but the data model is category-generic because vinyl, trading cards, antiques, art and more will follow.
+COLLECTed is a community for sharing collections, not a marketplace: no listings, prices, trades or sales. The MVP launches with two categories, books and music (records, CDs, cassettes), but the data model is category-generic because clothing, art, furniture and more will follow.
 
 - Email sign up and sign in (signed-in only; no guest browsing)
-- Add and delete books in your collection, including multiple copies of the same book
-- Photos on each book: 2 per item on the free plan (front and back), 10 on paid, enforced in the database
+- Add and delete books and music items in your collection, including multiple copies of the same item
+- Photos on each item: 2 per item on the free plan (front and back), 10 on paid, enforced in the database
 - Every collection is visible to every signed-in user
 - Favorite other users
 - Friend other users (send, accept, decline)

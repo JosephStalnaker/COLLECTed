@@ -1,12 +1,13 @@
 # Supabase migration plan
 
-Status: approved 2026-09-23. This plan supersedes earlier drafts. Each step below ships as its own PR. Any step that touches the schema, auth or RLS still gets a review before its files are edited, per the working rules in `CLAUDE.md`.
+Status: approved 2026-09-23; launch categories changed to books and music on 2026-09-24. This plan supersedes earlier drafts. Each step below ships as its own PR. Any step that touches the schema, auth or RLS still gets a review before its files are edited, per the working rules in `CLAUDE.md`.
 
 ## Goals and constraints
 
 - Move the backend from Firebase to Supabase, mainly for Postgres full-text search.
 - COLLECTed is a community for sharing collections, not a marketplace. There are no listings, prices, trades or sales.
-- The MVP ships **books only**, but the schema is category-generic. Vinyl, trading cards, antiques, art and more will follow, and adding a category is a data change, not a new table.
+- The MVP launches with **two categories: books and music** (records, CDs, cassettes). Both are mass-produced, so both use the shared catalog. The schema is category-generic: clothing, art, furniture and more will follow, and adding a category is a data change, not a new table.
+- Early growth targets book and music collectors first, so each community is big enough for collectors to find each other.
 - **Signed-in only.** There is no guest browsing. All read access uses the `authenticated` role, never `anon`.
 - **A web app is planned later.** No choice in this plan should only work on mobile (see "Designing for web").
 - There are no real users yet, so we **start fresh** on Supabase Auth. No Firebase users are migrated.
@@ -75,10 +76,10 @@ Only the server writes here (later, the payment provider's webhook via an Edge F
 
 | Column | Type | Notes |
 |---|---|---|
-| `slug` | text PK | seeded: `books` (active), `vinyl`, `trading_cards`, `antiques`, `art` (inactive) |
+| `slug` | text PK | seeded: `books`, `music` (active); `clothing`, `art`, `furniture` (inactive) |
 | `name` | text | |
-| `uses_catalog` | boolean | true for mass-produced items (books, vinyl, cards); false for one-of-a-kind items (antiques, art) |
-| `is_active` | boolean | MVP: only `books` |
+| `uses_catalog` | boolean | true for mass-produced items (books, music); false for mostly one-of-a-kind items (clothing, art, furniture) |
+| `is_active` | boolean | MVP: `books` and `music` |
 
 **`catalog_entries`**: shared, community-built catalog of mass-produced items.
 
@@ -87,10 +88,10 @@ Only the server writes here (later, the payment provider's webhook via an Edge F
 | `id` | uuid PK | |
 | `category` | text not null | FK → `categories(slug)` |
 | `title` | text not null | |
-| `creators` | text[] not null default '{}' | Authors, artists, manufacturers |
+| `creators` | text[] not null default '{}' | Authors, artists, bands, makers |
 | `year` | smallint | |
 | `image_url` | text | Stock or cover image |
-| `attributes` | jsonb not null default '{}' | Per-category details, e.g. publisher and format for books |
+| `attributes` | jsonb not null default '{}' | Per-category details (see "Launch category fields") |
 | `created_by` | uuid | FK → `profiles(id)` on delete **set null**. The catalog is shared, so it outlives its contributor. |
 | `search_vector` | tsvector | Maintained by a trigger. Used for the "is this already in the catalog?" lookup when adding an item. |
 
@@ -99,7 +100,7 @@ Only the server writes here (later, the payment provider's webhook via an Edge F
 | Column | Type | Notes |
 |---|---|---|
 | `entry_id` | uuid | FK → `catalog_entries(id)` cascade |
-| `scheme` | text | `isbn_13`, `isbn_10`, later `upc`, `discogs_release`, … |
+| `scheme` | text | `isbn_13`, `isbn_10` (books), `barcode` (music UPC/EAN), later `discogs_release`, … |
 | `value` | text | |
 
 Primary key is `(scheme, value)`, so each identifier maps to one entry. There's also an index on `entry_id`.
@@ -114,7 +115,7 @@ Primary key is `(scheme, value)`, so each identifier maps to one entry. There's 
 | `name` | text not null | |
 
 - Unique on `(owner_id, name)` and on `(id, owner_id)`, so items can reference both.
-- For the MVP, the app creates one "Books" collection per user the first time they add a book.
+- For the MVP, the app creates one collection per category the first time a user adds an item in it ("Books", "Music"). Multiple named collections per category can come later without schema changes.
 - There is no visibility column in the MVP; see "Future: visibility and share links".
 
 **`collection_items`**: owned copies.
@@ -128,12 +129,21 @@ Primary key is `(scheme, value)`, so each identifier maps to one entry. There's 
 | `title`, `creators`, `year` | | For one-of-a-kind items. A check requires a catalog entry or a title. |
 | `condition` | text | |
 | `notes` | text | |
-| `attributes` | jsonb not null default '{}' | Copy-specific details, e.g. a card's grade or an artwork's medium |
+| `attributes` | jsonb not null default '{}' | Copy-specific details, e.g. signed copy, or separate sleeve and media grades for a record |
 | `search_vector` | tsvector | See "Search" |
 
 - **Multiple copies of the same catalog entry are allowed.** There is no uniqueness constraint.
 - Indexes: `(owner_id, created_at desc)`, `catalog_entry_id`, `collection_id`, and GIN on `search_vector`.
 - Per-category attribute shapes are validated in the app with a TypeScript type per category, not in the database.
+
+**Launch category fields.** Every item has title, creators, year, condition and notes. Each category adds:
+
+| Category | Catalog `attributes` | Identifiers |
+|---|---|---|
+| `books` | publisher, format (hardcover, paperback, …), edition | ISBN-13, ISBN-10 |
+| `music` | format (LP, 7", 12", CD, cassette, …), label, catalog number, release country | barcode |
+
+A label's catalog number isn't unique across labels, so it's an attribute, not an identifier.
 
 **`item_photos`**
 
@@ -322,7 +332,7 @@ The app offers this in settings behind a confirmation, then signs out locally.
 | `src/types/` | `User` becomes the profile type (`uid` → `id`, adds `username`). `Collection` and `Item` are replaced by types generated from the schema (`src/data/database.types.ts`) plus per-category attribute types. |
 | `src/store/authStore.ts` | Same shape; holds the session and profile. |
 | `src/navigation/RootNavigator.tsx` | Auth gating unchanged. New tabs arrive as features land: Collection, Search, People, Settings. |
-| Screens | SignUp gets a username field. New: collection, add or edit book with photos, search, profile (favorite, friend, contact, block, report), friend requests, settings (share email, blocked users, delete account). |
+| Screens | SignUp gets a username field. New: collection, add or edit a book or music item with photos, search, profile (favorite, friend, contact, block, report), friend requests, settings (share email, blocked users, delete account). |
 | Tests | Data-layer modules are tested with a mocked Supabase client. Screens are tested by mocking `src/data/*`, the same way `__tests__/home-screen-test.tsx` does. |
 
 ## Migration order
@@ -331,7 +341,7 @@ Each step is one PR and must pass typecheck, tests and lint.
 
 1. **Tooling.** Supabase CLI as a dev dependency, `supabase init`, and the client and config in `src/data/`. Add `.env.example` and document the commands in `CLAUDE.md`. No schema changes, and nothing in the app uses the client yet.
 2. **Profiles and auth.** Migration: `profiles`, `profile_contacts`, `plans`, `subscriptions`, the sign-up trigger, and their RLS. Switch sign-up and sign-in to Supabase; add the username field, the app scheme, and the confirmation link handling.
-3. **Catalog and collections.** Migration: `categories` (seeded), `catalog_entries`, `catalog_identifiers`, `collections`, `collection_items`, `private.can_view_collection`, and their RLS. UI to add and delete books.
+3. **Catalog and collections.** Migration: `categories` (seeded), `catalog_entries`, `catalog_identifiers`, `collections`, `collection_items`, `private.can_view_collection`, and their RLS. UI to add and delete books and music items.
 4. **Photos.** Migration: `item_photos`, the limit trigger, the bucket and storage policies. Photo picking, resizing, EXIF stripping and upload.
 5. **Search.** Search-vector triggers, GIN indexes, `search_collections`, pgTAP tests, and the search screen.
 6. **Social.** `favorites`, `friendships`, their RLS and the UI.
@@ -362,7 +372,7 @@ Post-MVP: chat. It will use `conversations`, `conversation_members` and `message
 ## Risks
 
 - **RLS mistakes fail silently.** A missing policy shows up as an empty list, not an error. pgTAP tests on the access rules are the safeguard.
-- **Shared catalog quality.** Without ISBNs, duplicates like "The Hobbit" and "Hobbit, The" will build up. ISBN lookup or scanning (the app already has `expo-camera`) would mostly fix this later.
+- **Shared catalog quality.** Without identifiers, duplicates like "The Hobbit" and "Hobbit, The" will build up. Barcode scanning (ISBNs on books, UPC/EAN on record sleeves; the app already has `expo-camera`) and lookups against Open Library or Discogs would mostly fix this later. Some reissues reuse a barcode, so the add-item flow should let users pick "different pressing" instead of forcing a match.
 - **Scraping by signed-in users.** Every collection is visible to any account. Rate limiting and account-level abuse handling may be needed as the app grows.
 - **Free tier pauses** inactive dev projects after about a week.
 - **Session storage** in expo-sqlite localStorage isn't encrypted at rest. This is Expo's recommended approach. Moving to SecureStore-backed encryption is possible later without schema changes.
